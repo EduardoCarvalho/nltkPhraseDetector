@@ -1,0 +1,25 @@
+relatorio segmentado de /home/eduardo/nltkSegmenter/reports/test/original_reports/relatorio_teste3.txt
+convertido em 10:04:54 23/07/2012
+%cat=0.71
+
+DISCENTE
+
+
+
+DOCENTE
+
+O quadro de docentes é formado exclusivamente por doutores
+
+
+INFRAESTRUTURA
+
+A infraestrutura está ótima
+O banheiro está em condições razoáveis
+O vestiário está em péssimas condições
+Há muitos azulejos quebrados na piscina
+
+
+UNCATEGORIZED
+
+A análise da (informação), de que o átomo do coração
+Análise do átomo do coração

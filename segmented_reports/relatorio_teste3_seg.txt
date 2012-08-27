@@ -1,0 +1,27 @@
+relatorio segmentado de /home/eduardo/nltkSegmenter/reports/test/original_reports/relatorio_teste3.txt
+convertido em 16:29:09 10/05/2012
+%cat=0.78
+
+DISCENTE
+
+Os discentes tem apresentado rendimento acima da média.
+
+
+DOCENTE
+
+O quadro de docentes é formado exclusivamente por doutores.
+Os docentes estão insatisfeitos com o salário.
+
+
+INFRAESTRUTURA
+
+A infraestrutura está ótima.
+O banheiro está em condições razoáveis.
+O vestiário está em péssimas condições.
+Há muitos azulejos quebrados na piscina.
+
+
+UNCATEGORIZED
+
+A análise da (informação), de que o átomo do coração.
+Análise do átomo do coração.
