@@ -34,7 +34,7 @@ class TestPhrasesRequirementProcessor(TestCase):
         self.prp.create_a_dict_model_for_test_accuracy(self.v.tagged_unigrams_by_topic) \
         |should| equal_to((self.v.dict_model_by_topic, self.v.tagger_accuracy_by_topic))
         
-    def it_creates_wordtypes_of_nouns_unigrams_by_topic(self):
-        self.prp.create_wordtypes_of_nouns_unigrams_by_topic(self.v.nouns_unigrams_by_topic) \
-        |should| equal_to(self.v.wordtypes_of_nouns_unigrams_by_topic)    
+    def it_creates_most_frequent_nouns_unigrams_by_topic(self):
+        self.prp.create_most_frequent_nouns_unigrams_by_topic(self.v.nouns_unigrams_by_topic) \
+        |should| equal_to(self.v.most_frequent_nouns_unigrams_by_topic)    
         

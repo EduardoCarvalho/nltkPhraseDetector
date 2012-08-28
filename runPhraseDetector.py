@@ -19,8 +19,11 @@ class runPhraseDetector(object):
         dict_model_by_topic, \
         tagger_accuracy_by_topic = \
             prp.create_a_dict_model_for_test_accuracy(tagged_unigrams_by_topic)
-        wordtypes_of_nouns_unigrams_by_topic = \
-            prp.create_wordtypes_of_nouns_unigrams_by_topic(nouns_unigrams_by_topic)
-        prp.create_unigrams_list(wordtypes_of_nouns_unigrams_by_topic)
+        most_frequent_nouns_unigrams_by_topic = \
+            prp.create_most_frequent_nouns_unigrams_by_topic(nouns_unigrams_by_topic)
+        prp.create_unigrams_list(most_frequent_nouns_unigrams_by_topic)
         prp.show_accuracy_by_topic(tagger_accuracy_by_topic)
-        prp.remove_pyc_and_zombie_files            
+        prp.remove_pyc_and_zombie_files
+
+# rpd = runPhraseDetector()
+# rpd.detect_unigrams()

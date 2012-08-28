@@ -2,13 +2,13 @@ from nltk.corpus.reader import TaggedCorpusReader
 from nltk.tokenize import LineTokenizer
 from nltk.corpus import mac_morpho
 from nltk.tag import UnigramTagger
-
+from nltk.probability import FreqDist
+from nltk.util import bigrams
 
 from os import environ
 from commands import getstatusoutput
-
-from nltk.util import bigrams
 from enviroment_vars import ReportEnviroments
+from itertools import chain
 
 
 class PhrasesRequirementProcessor(object):
@@ -91,27 +91,21 @@ class PhrasesRequirementProcessor(object):
         tagger_accuracy_by_topic = {}
         for k, v in pre_model.items():
             tagger_accuracy_by_topic[k] = UnigramTagger(model=pre_model[k]).evaluate(test_sents)
-        return dict_model_by_topic, tagger_accuracy_by_topic 
+        return dict_model_by_topic, tagger_accuracy_by_topic
         
-    def create_wordtypes_of_nouns_unigrams_by_topic(self, nouns_unigrams_by_topic):
-        for k, v in nouns_unigrams_by_topic.items():
-            for i in range(1, len(nouns_unigrams_by_topic[k])):
-                nouns_unigrams_by_topic[k][0].extend(nouns_unigrams_by_topic[k][i])
-        wordtypes_of_nouns_unigrams_by_topic = {}  
-        for k, v in nouns_unigrams_by_topic.items():
-            wordtypes_of_nouns_unigrams_by_topic[k] = list(set(nouns_unigrams_by_topic[k][0]))
-        for k, v in wordtypes_of_nouns_unigrams_by_topic.items():
-            wordtypes_of_nouns_unigrams_by_topic[k] = map(lambda x: x.encode('utf-8'), 
-                                                          wordtypes_of_nouns_unigrams_by_topic[k])
-        return wordtypes_of_nouns_unigrams_by_topic      
+    def create_most_frequent_nouns_unigrams_by_topic(self, nouns_unigrams_by_topic):
+        unique_list_as_value = {k: list(chain(*v)) for k, v in nouns_unigrams_by_topic.items()} 
+        most_frequent_nouns_unigrams_by_topic = \
+            {k: FreqDist(v).keys()[:2] for k, v in unique_list_as_value.items()}
+        return most_frequent_nouns_unigrams_by_topic      
 
-    def create_unigrams_list(self, wordtypes_of_nouns_unigrams_by_topic):
+    def create_unigrams_list(self, most_frequent_nouns_unigrams_by_topic):
         re = ReportEnviroments()
         with open(re.unigrams_list+"unigrams.txt", 'w') as f:
-            for k, v in wordtypes_of_nouns_unigrams_by_topic.items():
+            for k, v in most_frequent_nouns_unigrams_by_topic.items():
                 f.write('\n\n' + k + '\n\n')
                 for unigram in v:
-                    f.write(unigram + '\n')
+                    f.write(unigram.encode('utf-8') + '\n')
             f.close()
         
     def show_accuracy_by_topic(self, tagger_accuracy_by_topic):
