@@ -29,6 +29,10 @@ class TestPhrasesRequirementProcessor(TestCase):
     def it_generates_nouns_unigrams_by_topic(self):
         self.prp.generate_nouns_unigrams_by_topic(self.v.tagged_unigrams_by_topic) \
         |should| equal_to(self.v.nouns_unigrams_by_topic)
+
+    def it_generates_none_unigrams_by_topic(self):
+        self.prp.generate_none_unigrams_by_topic(self.v.tagged_unigrams_by_topic) \
+        |should| equal_to(self.v.none_unigrams_by_topic)    
             
     def it_creates_a_dictionary_model_for_test_accuracy_of_tagger_by_topic(self):
         self.prp.create_a_dict_model_for_test_accuracy(self.v.tagged_unigrams_by_topic) \

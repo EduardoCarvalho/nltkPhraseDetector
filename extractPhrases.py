@@ -78,6 +78,17 @@ class PhrasesRequirementProcessor(object):
             nouns_unigrams_by_topic[k] = [w for w in nouns_unigrams_by_topic[k] 
                                             if w != []]
         return nouns_unigrams_by_topic
+
+    def generate_none_unigrams_by_topic(self, tagged_unigrams_by_topic):
+        none_unigrams_by_topic = {}
+        for k, v in tagged_unigrams_by_topic.items():
+            none_unigrams_by_topic[k] = [[w for (w, t) in sent 
+                                             if t==None] 
+                                             for sent in tagged_unigrams_by_topic[k]]
+        for k, v in none_unigrams_by_topic.items():
+            none_unigrams_by_topic[k] = [w for w in none_unigrams_by_topic[k] 
+                                            if w != []]
+        return none_unigrams_by_topic
         
     def create_a_dict_model_for_test_accuracy(self, tagged_unigrams_by_topic):
         pre_model = {k: map(dict, v) for k, v in tagged_unigrams_by_topic.items()}
@@ -94,19 +105,32 @@ class PhrasesRequirementProcessor(object):
         return dict_model_by_topic, tagger_accuracy_by_topic
         
     def create_most_frequent_nouns_unigrams_by_topic(self, nouns_unigrams_by_topic):
-        unique_list_as_value = {k: list(chain(*v)) for k, v in nouns_unigrams_by_topic.items()} 
+        unique_nouns_list_as_value = {k: list(chain(*v)) for k, v in nouns_unigrams_by_topic.items()} 
         most_frequent_nouns_unigrams_by_topic = \
-            {k: FreqDist(v).keys()[:2] for k, v in unique_list_as_value.items()}
-        return most_frequent_nouns_unigrams_by_topic      
+            {k: FreqDist(v).keys()[:2] for k, v in unique_nouns_list_as_value.items()}
+        return most_frequent_nouns_unigrams_by_topic
 
-    def create_unigrams_list(self, most_frequent_nouns_unigrams_by_topic):
+    def create_wordtypes_of_none_unigrams_by_topic(self, none_unigrams_by_topic):
+        wordtypes_of_none_unigrams_by_topic = {k: list(set(chain(*v))) for k, v in none_unigrams_by_topic.items()}
+        return wordtypes_of_none_unigrams_by_topic
+
+    def create_nouns_unigrams_list(self, most_frequent_nouns_unigrams_by_topic):
         re = ReportEnviroments()
-        with open(re.unigrams_list+"unigrams.txt", 'w') as f:
+        with open(re.unigrams_list+"nouns_unigrams.txt", 'w') as f:
             for k, v in most_frequent_nouns_unigrams_by_topic.items():
                 f.write('\n\n' + k + '\n\n')
-                for unigram in v:
-                    f.write(unigram.encode('utf-8') + '\n')
+                for noun_unigram in v:
+                    f.write(noun_unigram.encode('utf-8') + '\n')
             f.close()
+
+    def create_none_unigrams_list(self, wordtypes_of_none_unigrams_by_topic):
+        re = ReportEnviroments()
+        with open(re.unigrams_list+"none_unigrams.txt", 'w') as f:
+            for k, v in wordtypes_of_none_unigrams_by_topic.items():
+                f.write('\n\n' + k + '\n\n')
+                for none_unigram in v:
+                    f.write(none_unigram.encode('utf-8') + '\n')
+            f.close()        
         
     def show_accuracy_by_topic(self, tagger_accuracy_by_topic):
         print '\n'
