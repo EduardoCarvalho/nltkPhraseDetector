@@ -9,10 +9,11 @@ class TestPhrasesRequirementProcessor(TestCase):
 
     def setUp(self):
         self.v = Variables()
-        self.prp = PhrasesRequirementProcessor()
+        self.prp = PhrasesRequirementProcessor()        
         
     def it_generates_new_corpus_from_segmented_reports(self):
-        self.prp.generate_corpus_from_segmented_reports |should| equal_to((self.v.cut_of_segmented_reports, self.v.topics))
+        self.prp.generate_corpus_from_segmented_reports \
+        |should| equal_to((self.v.cut_of_segmented_reports, self.v.topics))
         
     def it_aggregates_sentences_of_topics_on_segmented_reports(self):
         self.prp.aggregate_topics_of_segmented_reports(self.v.cut_of_segmented_reports, self.v.topics) \
@@ -40,5 +41,8 @@ class TestPhrasesRequirementProcessor(TestCase):
         
     def it_creates_most_frequent_nouns_unigrams_by_topic(self):
         self.prp.create_most_frequent_nouns_unigrams_by_topic(self.v.nouns_unigrams_by_topic) \
-        |should| equal_to(self.v.most_frequent_nouns_unigrams_by_topic)    
-        
+        |should| equal_to(self.v.run_time_most_frequent_nouns_unigrams_by_topic) 
+
+    def it_creates_wordtypes_of_none_unigrams_by_topic(self):
+        self.prp.create_wordtypes_of_none_unigrams_by_topic(self.v.none_unigrams_by_topic) \
+        |should| equal_to(self.v.run_time_wordtypes_of_none_unigrams_by_topic)

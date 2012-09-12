@@ -6,9 +6,11 @@ from nltk.probability import FreqDist
 from nltk.util import bigrams
 
 from os import environ
+from os.path import exists
 from commands import getstatusoutput
 from enviroment_vars import ReportEnviroments
-from itertools import chain
+from ngramSupportWriter import NGramSupportWriter
+from itertools import chain, izip
 
 
 class PhrasesRequirementProcessor(object):
@@ -28,7 +30,7 @@ class PhrasesRequirementProcessor(object):
         cut_of_segmented_reports = []
         topics = ['DISCENTE', 'DOCENTE', 'INFRAESTRUTURA', 'UNCATEGORIZED']
         for i in range(len(raw_segmented_reports)):
-            cut_of_segmented_reports.append(raw_segmented_reports[i][raw_segmented_reports[i].index([topics[0].decode('utf-8')]):raw_segmented_reports[i].index([topics[-1].decode('utf-8')])+1])
+            cut_of_segmented_reports.append(raw_segmented_reports[i][raw_segmented_reports[i].index([topics[0].decode('utf-8')]):raw_segmented_reports[i].index([topics[-1].decode('utf-8')])+1])    
         return cut_of_segmented_reports, topics
 
     def aggregate_topics_of_segmented_reports(self, cut_of_segmented_reports, topics):
@@ -106,31 +108,38 @@ class PhrasesRequirementProcessor(object):
         
     def create_most_frequent_nouns_unigrams_by_topic(self, nouns_unigrams_by_topic):
         unique_nouns_list_as_value = {k: list(chain(*v)) for k, v in nouns_unigrams_by_topic.items()} 
-        most_frequent_nouns_unigrams_by_topic = \
-            {k: FreqDist(v).keys()[:2] for k, v in unique_nouns_list_as_value.items()}
-        return most_frequent_nouns_unigrams_by_topic
+        run_time_most_frequent_nouns_unigrams_by_topic = \
+            {k: FreqDist(v).keys()[:3] for k, v in unique_nouns_list_as_value.items()}
+        return run_time_most_frequent_nouns_unigrams_by_topic
 
     def create_wordtypes_of_none_unigrams_by_topic(self, none_unigrams_by_topic):
-        wordtypes_of_none_unigrams_by_topic = {k: list(set(chain(*v))) for k, v in none_unigrams_by_topic.items()}
-        return wordtypes_of_none_unigrams_by_topic
+        run_time_wordtypes_of_none_unigrams_by_topic = \
+            {k: list(set(chain(*v))) for k, v in none_unigrams_by_topic.items()}
+        return run_time_wordtypes_of_none_unigrams_by_topic
 
-    def create_nouns_unigrams_list(self, most_frequent_nouns_unigrams_by_topic):
+    def create_unigram_set_of_nouns_and_nones(self, 
+                                              run_time_most_frequent_nouns_unigrams_by_topic,
+                                              run_time_wordtypes_of_none_unigrams_by_topic):
         re = ReportEnviroments()
-        with open(re.unigrams_list+"nouns_unigrams.txt", 'w') as f:
-            for k, v in most_frequent_nouns_unigrams_by_topic.items():
-                f.write('\n\n' + k + '\n\n')
-                for noun_unigram in v:
-                    f.write(noun_unigram.encode('utf-8') + '\n')
-            f.close()
-
-    def create_none_unigrams_list(self, wordtypes_of_none_unigrams_by_topic):
-        re = ReportEnviroments()
-        with open(re.unigrams_list+"none_unigrams.txt", 'w') as f:
-            for k, v in wordtypes_of_none_unigrams_by_topic.items():
-                f.write('\n\n' + k + '\n\n')
-                for none_unigram in v:
-                    f.write(none_unigram.encode('utf-8') + '\n')
-            f.close()        
+        ngsw = NGramSupportWriter()
+        unigram_fileid_set = [re.nouns_unigrams_fileid, re.none_unigrams_fileid]
+        unigram_content_set = [run_time_most_frequent_nouns_unigrams_by_topic, 
+                               run_time_wordtypes_of_none_unigrams_by_topic]
+        for fileid, content in izip(unigram_fileid_set, unigram_content_set):
+            if exists(re.unigrams_directory + fileid):
+                ngrams_by_topic_from_file = \
+                    ngsw.take_ngrams_by_topic_from_file(re.unigrams_directory, 
+                                                        fileid)
+                merged_run_time_and_ngrams_from_file = \
+                    ngsw.merge_run_time_and_ngrams_from_file(ngrams_by_topic_from_file, 
+                                                             content)
+                ngsw.write_ngrams_in_a_file(re.unigrams_directory,
+                                            fileid,
+                                            merged_run_time_and_ngrams_from_file)
+            else:
+                ngsw.write_ngrams_in_a_file(re.unigrams_directory,
+                                            fileid,
+                                            content)      
         
     def show_accuracy_by_topic(self, tagger_accuracy_by_topic):
         print '\n'
